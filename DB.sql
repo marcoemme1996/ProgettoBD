@@ -753,9 +753,10 @@ EXECUTE FUNCTION ChiusuraProgLaboratorio();
 
 CREATE VIEW ScattiDiCarriera (CodImpiegato, Nome, Cognome, Tipo, Grado,
 Stipendio, AnnoDiPromozione) AS
-SELECT I.CodImpiegato, I.Nome, I.Cognome, I.Tipo, I.Grado, I.Stipendio, EXTRACT(YEAR FROM CURRENTDATE)
+SELECT I.CodImpiegato, I.Nome, I.Cognome, I.Tipo, I.Grado, I.Stipendio, date_part('year'::text, CURRENT_DATE)
 FROM Impiegato AS I
 
+-------------------
 
 CREATE FUNCTION ScattiDiCarriera() RETURNS TRIGGER AS
 $$
@@ -785,6 +786,12 @@ EXECUTE FUNCTION ScattiDiCarriera();
 Inserimenti
 -------------------
 
+INSERT INTO Azienda (CodAzienda, Nome, Sede) VALUES (1, ‘Apple’, ‘Napoli’);
+INSERT INTO Azienda (CodAzienda, Nome, Sede) VALUES (2, ‘Microsoft, ‘Roma’);
+INSERT INTO Azienda (CodAzienda, Nome, Sede) VALUES (3, ‘Amazon’, ‘Milano’);
+INSERT INTO Azienda (CodAzienda, Nome, Sede) VALUES (4, ‘Mastercard’, ‘Firenze’);
+INSERT INTO Azienda (CodAzienda, Nome, Sede) VALUES (5, ‘Adobe’, ‘Venezia’);	
+	
 INSERT INTO Impiegato(CodImpiegato, Nome, Cognome, Residenza, E-Mail, DataAssunzione, Tipo,
 Stipendio, Grado, Capo, CodAzienda) VALUES (1, ‘Angelo’, ‘Ricci’, ‘Napoli’, ‘angelo.ricci@gmail.com’, ‘2002-5-5’, ‘Dirigente’, 20000, NULL, NULL, 1);
 INSERT INTO Impiegato(CodImpiegato, Nome, Cognome, Residenza, E-Mail, DataAssunzione, Tipo,
@@ -865,12 +872,6 @@ INSERT INTO Impiegato(CodImpiegato, Nome, Cognome, Residenza, E-Mail, DataAssunz
 Stipendio, AnniDiServizio, Grado, Capo, CodAzienda) VALUES (31, ‘Pasquale’, ‘Ferrari’, ‘Firenze’, ‘pasquale.ferrari85@gmail.com’, ‘2015-12-1’, ‘Dirigente’, 20000, ‘Senior’, NULL, 4);
 INSERT INTO Impiegato(CodImpiegato, Nome, Cognome, Residenza, E-Mail, DataAssunzione, Tipo,
 Stipendio, AnniDiServizio, Grado, Capo, CodAzienda) VALUES (31, ‘Pasquale’, ‘Ferrari’, ‘Firenze’, ‘pasquale.ferrari85@gmail.com’, ‘2015-12-1’, ‘Dirigente’, 20000, ‘Senior’, NULL, 4);
-
-INSERT INTO Azienda (CodAzienda, Nome, Sede) VALUES (1, ‘Apple’, ‘Napoli’);
-INSERT INTO Azienda (CodAzienda, Nome, Sede) VALUES (2, ‘Microsoft, ‘Roma’);
-INSERT INTO Azienda (CodAzienda, Nome, Sede) VALUES (3, ‘Amazon’, ‘Milano’);
-INSERT INTO Azienda (CodAzienda, Nome, Sede) VALUES (4, ‘Mastercard’, ‘Firenze’);
-INSERT INTO Azienda (CodAzienda, Nome, Sede) VALUES (5, ‘Adobe’, ‘Venezia’);
 
 INSERT INTO Laboratorio(CodLab, Nome, Piano, Topic, NumeroAfferenti, Aperto, ResponsabileScientifico) VALUES (1, ‘Clear Results’, 5 , ‘Analisi statistica dei dati’, 20 , ‘S’, 32)
 INSERT INTO Laboratorio(CodLab, Nome, Piano, Topic, NumeroAfferenti, Aperto, ResponsabileScientifico) VALUES (2, ‘GreenWave’, 3, ‘Ricerca fonti di energia alternative’, 30, ‘S’, 35)
