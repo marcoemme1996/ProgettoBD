@@ -445,7 +445,6 @@ BEGIN
 	   ris = ris || NomeProg;
      END LOOP;
 	 risultatofinale = res1 || ris;
-  END IF;
 
   ELSE IF (TipoImp = 'Dirigente') THEN
      LOOP
