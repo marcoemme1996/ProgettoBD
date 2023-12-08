@@ -341,6 +341,8 @@ AFTER INSERT ON Impiegato
 FOR EACH ROW
 EXECUTE FUNCTION SetStipendio();
 
+-----------------------------------------------
+
 CREATE OR REPLACE FUNCTION getlabs(imp Impiegato.CodImpiegato%TYPE)
 RETURNS Laboratorio.Nome%TYPE AS
 $$
