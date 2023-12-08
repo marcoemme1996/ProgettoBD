@@ -43,7 +43,7 @@ CREATE TABLE Progetto(
 CUP INTEGER,
 Nome VARCHAR(20),
 Budget FLOAT,
-Attivo CHAR(1) CHECK(Attivo IN ('S', 'N'))
+Attivo CHAR(1) CHECK(Attivo IN ('S', 'N')),
 ReferenteScientifico INTEGER,
 Responsabile INTEGER,
 Lab1 INTEGER,
