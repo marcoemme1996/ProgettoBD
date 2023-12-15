@@ -1,20 +1,22 @@
+CREATE SCHEMA az;
+
 ----------------------
 Creazione tabelle
 ----------------------
 
-CREATE TABLE Azienda(
+CREATE TABLE az.Azienda(
 CodAzienda INTEGER,
 Nome VARCHAR(20),
 Sede VARCHAR(20),
 
 CONSTRAINT PKA1 PRIMARY KEY (CodAzienda));
 
-CREATE TABLE Impiegato(
+CREATE TABLE az.Impiegato(
 CodImpiegato INTEGER,
 Nome VARCHAR(20) NOT NULL,
 Cognome VARCHAR(20) NOT NULL,
 Residenza VARCHAR(20) NOT NULL,
-E-Mail VARCHAR(30) NOT NULL,
+EMail VARCHAR(30) NOT NULL,
 Stipendio FLOAT NOT NULL,
 DataAssunzione DATE NOT NULL,
 Tipo VARCHAR(15) NOT NULL CHECK(Tipo IN ('Dipendente', 'Dirigente')),
@@ -23,11 +25,11 @@ CodAzienda INTEGER NOT NULL,
 Capo INTEGER,
 
 CONSTRAINT PKI1 PRIMARY KEY (CodImpiegato),
-CONSTRAINT UNQI1 UNIQUE (E-Mail),
+CONSTRAINT UNQI1 UNIQUE (EMail),
 CONSTRAINT FKI1 FOREIGN KEY(CodAzienda) REFERENCES Azienda(CodAzienda) ON DELETE CASCADE,
 CONSTRAINT FKI2 FOREIGN KEY(Capo) REFERENCES Impiegato(CodImpiegato));
 
-CREATE TABLE Laboratorio(
+CREATE TABLE az.Laboratorio(
 CodLab INTEGER,
 Nome VARCHAR(20) NOT NULL,
 Piano INTEGER NOT NULL,
@@ -39,7 +41,7 @@ ResponsabileScientifico INTEGER,
 CONSTRAINT PKL1 PRIMARY KEY (CodLab),
 CONSTRAINT FKL1 FOREIGN KEY(ResponsabileScientifico) REFERENCES Impiegato(CodImpiegato));
 
-CREATE TABLE Progetto(
+CREATE TABLE az.Progetto(
 CUP INTEGER,
 Nome VARCHAR(20),
 Budget FLOAT,
