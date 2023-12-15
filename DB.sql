@@ -211,7 +211,7 @@ TipoImpiegato az.Impiegato.Tipo%Type;
 
 BEGIN
 
-SELECT YEAR(CURRENT_DATE) - YEAR(I.DataAssunzione) INTO AnniDiServizio
+SELECT EXTRACT(YEAR FROM CURRENT_DATE) - EXTRACT(YEAR FROM I.DataAssunzione) INTO AnniDiServizio
 FROM az.Impiegato AS I
 WHERE I.CodImpiegato = NEW.CodImpiegato;
 
