@@ -883,7 +883,6 @@ INSERT INTO az.Laboratorio(CodLab, Nome, Piano, Topic, NumeroAfferenti, Aperto, 
 INSERT INTO az.Laboratorio(CodLab, Nome, Piano, Topic, NumeroAfferenti, Aperto, ResponsabileScientifico) VALUES (14, 'Acoustic Laboratory', 2, 'Sviluppo sistemi acustici' , 25, 'S', 18);
 INSERT INTO az.Laboratorio(CodLab, Nome, Piano, Topic, NumeroAfferenti, Aperto, ResponsabileScientifico) VALUES (15, 'ClariTest Lab', 3, 'Informazioni su studenti universitari', 35, 'S', 29);
 
-
 INSERT INTO az.Progetto(CUP, Nome, Budget, Attivo, ReferenteScientifico, Responsabile, Lab1, Lab2, Lab3) VALUES (1, 'Progetto Alfa', 5000, 'S', 9, 30, 2, 7, NULL);
 INSERT INTO az.Progetto(CUP, Nome, Budget, Attivo, ReferenteScientifico, Responsabile, Lab1, Lab2, Lab3) VALUES (2, 'Progetto Beta', 4300, 'N', 6, 21, NULL, NULL, NULL);
 INSERT INTO az.Progetto(CUP, Nome, Budget, Attivo, ReferenteScientifico, Responsabile, Lab1, Lab2, Lab3) VALUES (3, 'Progetto Gamma', 6700, 'S', 24, 4, 15, 12, NULL);
