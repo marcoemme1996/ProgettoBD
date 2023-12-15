@@ -26,8 +26,8 @@ Capo INTEGER,
 
 CONSTRAINT PKI1 PRIMARY KEY (CodImpiegato),
 CONSTRAINT UNQI1 UNIQUE (EMail),
-CONSTRAINT FKI1 FOREIGN KEY(CodAzienda) REFERENCES Azienda(CodAzienda) ON DELETE CASCADE,
-CONSTRAINT FKI2 FOREIGN KEY(Capo) REFERENCES Impiegato(CodImpiegato));
+CONSTRAINT FKI1 FOREIGN KEY(CodAzienda) REFERENCES az.Azienda(CodAzienda) ON DELETE CASCADE,
+CONSTRAINT FKI2 FOREIGN KEY(Capo) REFERENCES az.Impiegato(CodImpiegato));
 
 CREATE TABLE az.Laboratorio(
 CodLab INTEGER,
@@ -39,7 +39,7 @@ Aperto CHAR(1) NOT NULL CHECK(Aperto IN ('S', 'N')),
 ResponsabileScientifico INTEGER,
 
 CONSTRAINT PKL1 PRIMARY KEY (CodLab),
-CONSTRAINT FKL1 FOREIGN KEY(ResponsabileScientifico) REFERENCES Impiegato(CodImpiegato));
+CONSTRAINT FKL1 FOREIGN KEY(ResponsabileScientifico) REFERENCES az.Impiegato(CodImpiegato));
 
 CREATE TABLE az.Progetto(
 CUP INTEGER,
@@ -54,23 +54,23 @@ Lab3 INTEGER,
 
 CONSTRAINT PKP1 PRIMARY KEY (CUP),
 CONSTRAINT UNQP1 UNIQUE (Nome),
-CONSTRAINT FKP1 FOREIGN KEY(ReferenteScientifico) REFERENCES Impiegato(CodImpiegato),
-CONSTRAINT FKP2 FOREIGN KEY(Responsabile) REFERENCES Impiegato(CodImpiegato),
-CONSTRAINT FKP3 FOREIGN KEY(Lab1) REFERENCES Laboratorio(CodLab),
-CONSTRAINT FKP4 FOREIGN KEY(Lab2) REFERENCES Laboratorio(CodLab),
-CONSTRAINT FKP5 FOREIGN KEY(Lab2) REFERENCES Laboratorio(CodLab));
+CONSTRAINT FKP1 FOREIGN KEY(ReferenteScientifico) REFERENCES az.Impiegato(CodImpiegato),
+CONSTRAINT FKP2 FOREIGN KEY(Responsabile) REFERENCES az.Impiegato(CodImpiegato),
+CONSTRAINT FKP3 FOREIGN KEY(Lab1) REFERENCES az.Laboratorio(CodLab),
+CONSTRAINT FKP4 FOREIGN KEY(Lab2) REFERENCES az.Laboratorio(CodLab),
+CONSTRAINT FKP5 FOREIGN KEY(Lab2) REFERENCES az.Laboratorio(CodLab));
 
 ------------------------------
 Funzioni e Triggers
 ------------------------------
-CREATE OR REPLACE FUNCTION StipValido() RETURNS TRIGGER AS
+CREATE OR REPLACE FUNCTION az.StipValido() RETURNS TRIGGER AS
 $$
 DECLARE
-    Stip_Sottoposto Impiegato.Stipendio%Type;
-    Stip_Capo Impiegato.Stipendio%Type;
+    Stip_Sottoposto az.Impiegato.Stipendio%Type;
+    Stip_Capo az.Impiegato.Stipendio%Type;
 BEGIN
    SELECT  I1.Stipendio, I2.Stipendio INTO Stip_Sottoposto, Stip_Capo
-   FROM Impiegato AS I1, Impiegato AS I2
+   FROM az.Impiegato AS I1, az.Impiegato AS I2
    WHERE I1.CodImpiegato = CodImp AND I1.Capo = I2.CodImpiegato;
 
     IF (Stip_Sottoposto >= StipCapo) THEN
@@ -86,9 +86,9 @@ $$ LANGUAGE plpgsql;
 -------------------
 
 CREATE TRIGGER TriggerStipValido
-BEFORE INSERT ON Impiegato
+BEFORE INSERT ON az.Impiegato
 FOR EACH ROW
-EXECUTE FUNCTION StipValido();
+EXECUTE FUNCTION az.StipValido();
 
 -----------------------------------------------
 
