@@ -870,21 +870,21 @@ Stipendio, Grado, Capo, CodAzienda) VALUES (36, 'Luca', 'Bellei', 'Firenze', 'be
 INSERT INTO az.Laboratorio(CodLab, Nome, Piano, Topic, NumeroAfferenti, Aperto, ResponsabileScientifico) VALUES (1, 'Clear Results', 5 , 'Analisi statistica dei dati', 20 , 'S', 32);
 INSERT INTO az.Laboratorio(CodLab, Nome, Piano, Topic, NumeroAfferenti, Aperto, ResponsabileScientifico) VALUES (2, 'GreenWave', 3, 'Ricerca fonti di energia alternative', 30, 'S', 35);
 INSERT INTO az.Laboratorio(CodLab, Nome, Piano, Topic, NumeroAfferenti, Aperto, ResponsabileScientifico) VALUES (3, 'DiagnostiLabs', 6, 'Impatto della tecnologia su economia', 25, 'N', NULL);
-INSERT INTO az.Laboratorio(CodLab, Nome, Piano, Topic, NumeroAfferenti, Aperto, ResponsabileScientifico)  VALUES (4, 'Prexis', 3, 'Sviluppo e design dispositivi elettronici', 35 'N', NULL);
-INSERT INTO az.Laboratorio(CodLab, Nome, Piano, Topic, NumeroAfferenti, Aperto, ResponsabileScientifico VALUES (5, 'IALAB', 5, 'Applicazione e benefici intelligenza artificiale' , 50 'S', 16);
-INSERT INTO az.Laboratorio(CodLab, Nome, Piano, Topic, NumeroAfferenti, Aperto, ResponsabileScientifico VALUES (6, 'ProQuery Laboratory', 3, 'Analisi e miglioramento delle query', 20, 'S', 32);
-INSERT INTO az.Laboratorio(CodLab, Nome, Piano, Topic, NumeroAfferenti, Aperto, ResponsabileScientifico VALUES (7, 'SocLab', 4, 'Impatto dei social media', 20 'S', 20);
-INSERT INTO az.Laboratorio(CodLab, Nome, Piano, Topic, NumeroAfferenti, Aperto, ResponsabileScientifico VALUES (8, 'Realab', 5, 'Uso di reti di computer utilizzando reti wireless', 30 'S', 18);
-INSERT INTO az.Laboratorio(CodLab, Nome, Piano, Topic, NumeroAfferenti, Aperto, ResponsabileScientifico VALUES (9, 'Clark Lab', 3, 'Impedire infezioni da virus', 30, 'N', NULL);
-INSERT INTO az.Laboratorio(CodLab, Nome, Piano, Topic, NumeroAfferenti, Aperto, ResponsabileScientifico VALUES (10, 'InternetDiagnostic', 3, 'Impatto della rete internet sulla società' , 40, 'S', 34);
-INSERT INTO az.Laboratorio(CodLab, Nome, Piano, Topic, NumeroAfferenti, Aperto, ResponsabileScientifico VALUES (11, 'MatrixTest Laboratory', 2, 'Sviluppo funzioni matematiche' , 40, 'S', 13);
-INSERT INTO az.Laboratorio(CodLab, Nome, Piano, Topic, NumeroAfferenti, Aperto, ResponsabileScientifico VALUES (12, 'AlphaLab', 3, 'Costruzione e assemblamento sistemi computazionali', 30, 'S', 14);
-INSERT INTO az.Laboratorio(CodLab, Nome, Piano, Topic, NumeroAfferenti, Aperto, ResponsabileScientifico VALUES (13, 'Labworks', 3, 'Tecnologia usata per creare opportunità di lavoro', 40, 'S', 35);
-INSERT INTO az.Laboratorio(CodLab, Nome, Piano, Topic, NumeroAfferenti, Aperto, ResponsabileScientifico VALUES (14, 'Acoustic Laboratory', 2, 'Sviluppo sistemi acustici' , 25, 'S', 18);
-INSERT INTO az.Laboratorio(CodLab, Nome, Piano, Topic, NumeroAfferenti, Aperto, ResponsabileScientifico VALUES (15, 'ClariTest Lab', 3, 'Informazioni su studenti universitari', 35, 'S', 29);
+INSERT INTO az.Laboratorio(CodLab, Nome, Piano, Topic, NumeroAfferenti, Aperto, ResponsabileScientifico) VALUES (4, 'Prexis', 3, 'Sviluppo e design dispositivi elettronici', 35 'N', NULL);
+INSERT INTO az.Laboratorio(CodLab, Nome, Piano, Topic, NumeroAfferenti, Aperto, ResponsabileScientifico) VALUES (5, 'IALAB', 5, 'Applicazione e benefici intelligenza artificiale' , 50 'S', 16);
+INSERT INTO az.Laboratorio(CodLab, Nome, Piano, Topic, NumeroAfferenti, Aperto, ResponsabileScientifico) VALUES (6, 'ProQuery Laboratory', 3, 'Analisi e miglioramento delle query', 20, 'S', 32);
+INSERT INTO az.Laboratorio(CodLab, Nome, Piano, Topic, NumeroAfferenti, Aperto, ResponsabileScientifico) VALUES (7, 'SocLab', 4, 'Impatto dei social media', 20 'S', 20);
+INSERT INTO az.Laboratorio(CodLab, Nome, Piano, Topic, NumeroAfferenti, Aperto, ResponsabileScientifico) VALUES (8, 'Realab', 5, 'Uso di reti di computer utilizzando reti wireless', 30 'S', 18);
+INSERT INTO az.Laboratorio(CodLab, Nome, Piano, Topic, NumeroAfferenti, Aperto, ResponsabileScientifico) VALUES (9, 'Clark Lab', 3, 'Impedire infezioni da virus', 30, 'N', NULL);
+INSERT INTO az.Laboratorio(CodLab, Nome, Piano, Topic, NumeroAfferenti, Aperto, ResponsabileScientifico) VALUES (10, 'InternetDiagnostic', 3, 'Impatto della rete internet sulla società' , 40, 'S', 34);
+INSERT INTO az.Laboratorio(CodLab, Nome, Piano, Topic, NumeroAfferenti, Aperto, ResponsabileScientifico) VALUES (11, 'MatrixTest Laboratory', 2, 'Sviluppo funzioni matematiche' , 40, 'S', 13);
+INSERT INTO az.Laboratorio(CodLab, Nome, Piano, Topic, NumeroAfferenti, Aperto, ResponsabileScientifico) VALUES (12, 'AlphaLab', 3, 'Costruzione e assemblamento sistemi computazionali', 30, 'S', 14);
+INSERT INTO az.Laboratorio(CodLab, Nome, Piano, Topic, NumeroAfferenti, Aperto, ResponsabileScientifico) VALUES (13, 'Labworks', 3, 'Tecnologia usata per creare opportunità di lavoro', 40, 'S', 35);
+INSERT INTO az.Laboratorio(CodLab, Nome, Piano, Topic, NumeroAfferenti, Aperto, ResponsabileScientifico) VALUES (14, 'Acoustic Laboratory', 2, 'Sviluppo sistemi acustici' , 25, 'S', 18);
+INSERT INTO az.Laboratorio(CodLab, Nome, Piano, Topic, NumeroAfferenti, Aperto, ResponsabileScientifico) VALUES (15, 'ClariTest Lab', 3, 'Informazioni su studenti universitari', 35, 'S', 29);
 
-INSERT INTO Progetto(CUP, Nome, Budget, Attivo, ReferenteScientifico, Responsabile, Lab1, Lab2, Lab3) VALUES(1, ‘Progetto Alfa’, 5000, ‘S’, 9, 30, 2, 7, NULL)
-INSERT INTO Progetto(CUP, Nome, Budget, Attivo, ReferenteScientifico, Responsabile, Lab1, Lab2, Lab3)  VALUES(2, ‘Progetto Beta’, 4300, ‘N’, 6, 21, NULL, NULL, NULL)
-INSERT INTO Progetto(CUP, Nome, Budget, Attivo, ReferenteScientifico, Responsabile, Lab1, Lab2, Lab3)VALUES(3, ‘Progetto Gamma’, 6700, ‘S’, 24, 4, 15, 12, 34)
-INSERT INTO Progetto(CUP, Nome, Budget, Attivo, ReferenteScientifico, Responsabile, Lab1, Lab2, Lab3)VALUES(4, ‘Progetto Epsilon’ , 6000, ‘S’, 16, 28, 5, NULL, NULL)
-INSERT INTO Progetto(CUP, Nome, Budget, Attivo, ReferenteScientifico, Responsabile, Lab1, Lab2, Lab3) VALUES(5, ‘Progetto Zeta’ , 5500, ‘S’, 18, 22, 14, NULL, NULL)
+INSERT INTO az.Progetto(CUP, Nome, Budget, Attivo, ReferenteScientifico, Responsabile, Lab1, Lab2, Lab3) VALUES (1, 'Progetto Alfa', 5000, 'S', 9, 30, 2, 7, NULL);
+INSERT INTO az.Progetto(CUP, Nome, Budget, Attivo, ReferenteScientifico, Responsabile, Lab1, Lab2, Lab3) VALUES (2, 'Progetto Beta', 4300, 'N', 6, 21, NULL, NULL, NULL);
+INSERT INTO az.Progetto(CUP, Nome, Budget, Attivo, ReferenteScientifico, Responsabile, Lab1, Lab2, Lab3) VALUES (3, 'Progetto Gamma', 6700, 'S', 24, 4, 15, 12, 34);
+INSERT INTO az.Progetto(CUP, Nome, Budget, Attivo, ReferenteScientifico, Responsabile, Lab1, Lab2, Lab3) VALUES (4, 'Progetto Epsilon' , 6000, 'S', 16, 28, 5, NULL, NULL);
+INSERT INTO az.Progetto(CUP, Nome, Budget, Attivo, ReferenteScientifico, Responsabile, Lab1, Lab2, Lab3) VALUES (5, 'Progetto Zeta' , 5500, 'S', 18, 22, 14, NULL, NULL);
