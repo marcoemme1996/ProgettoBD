@@ -71,9 +71,9 @@ DECLARE
 BEGIN
    SELECT  I1.Stipendio, I2.Stipendio INTO Stip_Sottoposto, Stip_Capo
    FROM az.Impiegato AS I1, az.Impiegato AS I2
-   WHERE I1.CodImpiegato = CodImp AND I1.Capo = I2.CodImpiegato;
+   WHERE I1.CodImpiegato = NEW.CodImpiegato AND I1.Capo = I2.CodImpiegato;
 
-    IF (Stip_Sottoposto >= StipCapo) THEN
+    IF (Stip_Sottoposto >= Stip_Capo) THEN
     RAISE EXCEPTION 'Non valido: impossibile che lo stipendio di un
     sottoposto sia maggiore o uguale di quello del suo capo';
     END IF;
@@ -477,7 +477,7 @@ TipoImp az.Impiegato.Tipo%Type;
 BEGIN
 
 SELECT I.Grado INTO GradoImp
-FROM az.Impiegato AS I JOIN Laboratorio AS L ON I.CodImpiegato =
+FROM az.Impiegato AS I JOIN az.Laboratorio AS L ON I.CodImpiegato =
 L.ResponsabileScientifico
 WHERE L.CodLab = NEW.CodLab;
 
@@ -506,12 +506,12 @@ DECLARE
 BEGIN
 
 IF(NEW.ResponsabileScientifico = NULL) THEN
-    UPDATE Laboratorio
-    SET NEW.Aperto = 'N';
+    UPDATE az.Laboratorio 
+    SET Aperto = 'N';
 
 ELSE
-    UPDATE Laboratorio
-    SET NEW.Aperto = 'S';
+    UPDATE az.Laboratorio 
+    SET Aperto = 'S';
 END IF;
 
 RETURN NEW;
@@ -581,7 +581,7 @@ $$ LANGUAGE plpgsql;
 
 -----------------------------------------------
 
-CREATE FUNCTION az.CheckProgetto() RETURNS TRIGGER AS
+CREATE OR REPLACE FUNCTION az.CheckProgetto() RETURNS TRIGGER AS
 $$
 DECLARE
 
@@ -593,12 +593,12 @@ TipoReferente az.Impiegato.Tipo%Type;
 BEGIN
 
 SELECT I.Grado, I.Tipo INTO GradoResp, TipoResp
-FROM az.Impiegato AS I JOIN az.Laboratorio AS L ON I.CodImpiegato = L.Responsabile
-WHERE I.CodImpiegato = NEW.CodImpiegato;
+FROM az.Impiegato AS I JOIN az.Progetto AS PR ON I.CodImpiegato = PR.Responsabile
+WHERE I.CodImpiegato = NEW.Responsabile;
 
 SELECT I.Grado, I.Tipo INTO GradoReferente, TipoReferente
-FROM az.Impiegato AS I JOIN az.Laboratorio AS L ON I.CodImpiegato = L.ReferenteScientifico
-WHERE I.CodImpiegato = NEW.CodImpiegato;
+FROM az.Impiegato AS I JOIN az.Progetto AS PR ON I.CodImpiegato = PR.ReferenteScientifico
+WHERE I.CodImpiegato = NEW.ReferenteScientifico;
 
 IF(TipoReferente = 'Dirigente' OR (TipoReferente = 'Dipendente' AND GradoReferente <> 'Senior') ) THEN
 RAISE EXCEPTION 'Non valido: il referente scientifico deve essere un dipendente senior';
@@ -811,23 +811,23 @@ Stipendio, Grado, Capo, CodAzienda) VALUES (7, 'Giulio', 'DAmico', 'Roma', 'giul
 INSERT INTO az.Impiegato(CodImpiegato, Nome, Cognome, Residenza, EMail, DataAssunzione, Tipo,
 Stipendio, Grado, Capo, CodAzienda) VALUES (8, 'Mario', 'Rossi', 'Venezia', 'rossimario@gmail.com', '2015-4-2', 'Dipendente', 15000, 'Senior', NULL, 5);
 INSERT INTO az.Impiegato(CodImpiegato, Nome, Cognome, Residenza, EMail, DataAssunzione, Tipo,
-Stipendio, AnniDiServizio, Grado, Capo, CodAzienda) VALUES (9, 'Sara', 'Romano', 'Milano', 'sararomano@gmail.com', '2013-5-7', 'Dipendente', 15000, 'Senior', NULL, 3);
+Stipendio, Grado, Capo, CodAzienda) VALUES (9, 'Sara', 'Romano', 'Milano', 'sararomano@gmail.com', '2013-5-7', 'Dipendente', 15000, 'Senior', NULL, 3);
 INSERT INTO az.Impiegato(CodImpiegato, Nome, Cognome, Residenza, EMail, DataAssunzione, Tipo,
-Stipendio, AnniDiServizio, Grado, Capo, CodAzienda) VALUES (10, 'Ilario', 'Barbieri', 'Venezia', 'barbieriI@gmail.com', '2019-6-19', 'Dipendente', 10000, 'Middle', 8, 5);
+Stipendio, Grado, Capo, CodAzienda) VALUES (10, 'Ilario', 'Barbieri', 'Venezia', 'barbieriI@gmail.com', '2019-6-19', 'Dipendente', 10000, 'Middle', 8, 5);
 INSERT INTO az.Impiegato(CodImpiegato, Nome, Cognome, Residenza, EMail, DataAssunzione, Tipo,
 Stipendio, Grado, Capo, CodAzienda) VALUES (11, 'Luca', 'Borsari', 'Milano', 'lucaborsari@gmail.com', '2012-11-22', 'Dirigente', 20000, NULL, NULL, 3);
 INSERT INTO az.Impiegato(CodImpiegato, Nome, Cognome, Residenza, EMail, DataAssunzione, Tipo,
-Stipendio, Grado, Capo, CodAzienda) VALUES (12, 'Maria', 'Venturelli', 'Firenze', 'v.maria@gmail.com', '3-18-2022', 'Dirigente', 20000, NULL, NULL, 4);
+Stipendio, Grado, Capo, CodAzienda) VALUES (12, 'Maria', 'Venturelli', 'Firenze', 'v.maria@gmail.com', '2022-3-18', 'Dirigente', 20000, NULL, NULL, 4);
 INSERT INTO az.Impiegato(CodImpiegato, Nome, Cognome, Residenza, EMail, DataAssunzione, Tipo,
 Stipendio, Grado, Capo, CodAzienda) VALUES (13, 'Davide', 'Russo', 'Napoli', 'russodavide@gmail.com', '2014-1-28', 'Dipendente', 15000, 'Senior', NULL, 1);
 INSERT INTO az.Impiegato(CodImpiegato, Nome, Cognome, Residenza, EMail, DataAssunzione, Tipo,
-Stipendio, Grado, Capo, CodAzienda) VALUES (14, 'Chiara', 'Galli', 'Roma', 'giul123@gmail.com', '2015-5-6', 'Dipendente', 15000, 'Senior', 4, 2);
+Stipendio, Grado, Capo, CodAzienda) VALUES (14, 'Chiara', 'Galli', 'Roma', 'chiagalli@gmail.com', '2015-5-6', 'Dipendente', 15000, 'Senior', 4, 2);
 INSERT INTO az.Impiegato(CodImpiegato, Nome, Cognome, Residenza, EMail, DataAssunzione, Tipo,
 Stipendio, Grado, Capo, CodAzienda) VALUES (15, 'Guglielmo', 'Lodi', 'Milano', 'lodiguglielmo85@gmail.com', '2020-2-7', 'Dipendente', 5000, 'Junior', 11, 3);
 INSERT INTO az.Impiegato(CodImpiegato, Nome, Cognome, Residenza, EMail, DataAssunzione, Tipo,
 Stipendio, Grado, Capo, CodAzienda) VALUES (16, 'Lucia', 'Cuoghi', 'Napoli', 'luciacuoghi@gmail.com', '2014-6-29', 'Dipendente', 15000, 'Senior', 1, 1);
 INSERT INTO az.Impiegato(CodImpiegato, Nome, Cognome, Residenza, EMail, DataAssunzione, Tipo,
-Stipendio, Grado, Capo, CodAzienda) VALUES (17, 'Giacomo', 'Rinaldi', 'Venezia', 'lodiguglielmo85@gmail.com', '2013-5-12', 'Dirigente', 20000, NULL, NULL, 5);
+Stipendio, Grado, Capo, CodAzienda) VALUES (17, 'Giacomo', 'Rinaldi', 'Venezia', 'giarinaldi@gmail.com', '2013-5-12', 'Dirigente', 20000, NULL, NULL, 5);
 INSERT INTO az.Impiegato(CodImpiegato, Nome, Cognome, Residenza, EMail, DataAssunzione, Tipo,
 Stipendio, Grado, Capo, CodAzienda) VALUES (18, 'Marco', 'Leonardi', 'Firenze', 'marcleonardi@gmail.com', '2016-4-14', 'Dipendente', 15000, 'Senior', 12, 4);
 INSERT INTO az.Impiegato(CodImpiegato, Nome, Cognome, Residenza, EMail, DataAssunzione, Tipo,
@@ -870,11 +870,11 @@ Stipendio, Grado, Capo, CodAzienda) VALUES (36, 'Luca', 'Bellei', 'Firenze', 'be
 INSERT INTO az.Laboratorio(CodLab, Nome, Piano, Topic, NumeroAfferenti, Aperto, ResponsabileScientifico) VALUES (1, 'Clear Results', 5 , 'Analisi statistica dei dati', 20 , 'S', 32);
 INSERT INTO az.Laboratorio(CodLab, Nome, Piano, Topic, NumeroAfferenti, Aperto, ResponsabileScientifico) VALUES (2, 'GreenWave', 3, 'Ricerca fonti di energia alternative', 30, 'S', 35);
 INSERT INTO az.Laboratorio(CodLab, Nome, Piano, Topic, NumeroAfferenti, Aperto, ResponsabileScientifico) VALUES (3, 'DiagnostiLabs', 6, 'Impatto della tecnologia su economia', 25, 'N', NULL);
-INSERT INTO az.Laboratorio(CodLab, Nome, Piano, Topic, NumeroAfferenti, Aperto, ResponsabileScientifico) VALUES (4, 'Prexis', 3, 'Sviluppo e design dispositivi elettronici', 35 'N', NULL);
-INSERT INTO az.Laboratorio(CodLab, Nome, Piano, Topic, NumeroAfferenti, Aperto, ResponsabileScientifico) VALUES (5, 'IALAB', 5, 'Applicazione e benefici intelligenza artificiale' , 50 'S', 16);
+INSERT INTO az.Laboratorio(CodLab, Nome, Piano, Topic, NumeroAfferenti, Aperto, ResponsabileScientifico) VALUES (4, 'Prexis', 3, 'Sviluppo e design dispositivi elettronici', 35, 'N', NULL);
+INSERT INTO az.Laboratorio(CodLab, Nome, Piano, Topic, NumeroAfferenti, Aperto, ResponsabileScientifico) VALUES (5, 'IALAB', 5, 'Applicazione e benefici intelligenza artificiale' , 50, 'S', 16);
 INSERT INTO az.Laboratorio(CodLab, Nome, Piano, Topic, NumeroAfferenti, Aperto, ResponsabileScientifico) VALUES (6, 'ProQuery Laboratory', 3, 'Analisi e miglioramento delle query', 20, 'S', 32);
-INSERT INTO az.Laboratorio(CodLab, Nome, Piano, Topic, NumeroAfferenti, Aperto, ResponsabileScientifico) VALUES (7, 'SocLab', 4, 'Impatto dei social media', 20 'S', 20);
-INSERT INTO az.Laboratorio(CodLab, Nome, Piano, Topic, NumeroAfferenti, Aperto, ResponsabileScientifico) VALUES (8, 'Realab', 5, 'Uso di reti di computer utilizzando reti wireless', 30 'S', 18);
+INSERT INTO az.Laboratorio(CodLab, Nome, Piano, Topic, NumeroAfferenti, Aperto, ResponsabileScientifico) VALUES (7, 'SocLab', 4, 'Impatto dei social media', 20, 'S', 20);
+INSERT INTO az.Laboratorio(CodLab, Nome, Piano, Topic, NumeroAfferenti, Aperto, ResponsabileScientifico) VALUES (8, 'Realab', 5, 'Uso di reti di computer utilizzando reti wireless', 30, 'S', 18);
 INSERT INTO az.Laboratorio(CodLab, Nome, Piano, Topic, NumeroAfferenti, Aperto, ResponsabileScientifico) VALUES (9, 'Clark Lab', 3, 'Impedire infezioni da virus', 30, 'N', NULL);
 INSERT INTO az.Laboratorio(CodLab, Nome, Piano, Topic, NumeroAfferenti, Aperto, ResponsabileScientifico) VALUES (10, 'InternetDiagnostic', 3, 'Impatto della rete internet sulla società' , 40, 'S', 34);
 INSERT INTO az.Laboratorio(CodLab, Nome, Piano, Topic, NumeroAfferenti, Aperto, ResponsabileScientifico) VALUES (11, 'MatrixTest Laboratory', 2, 'Sviluppo funzioni matematiche' , 40, 'S', 13);
@@ -883,8 +883,9 @@ INSERT INTO az.Laboratorio(CodLab, Nome, Piano, Topic, NumeroAfferenti, Aperto, 
 INSERT INTO az.Laboratorio(CodLab, Nome, Piano, Topic, NumeroAfferenti, Aperto, ResponsabileScientifico) VALUES (14, 'Acoustic Laboratory', 2, 'Sviluppo sistemi acustici' , 25, 'S', 18);
 INSERT INTO az.Laboratorio(CodLab, Nome, Piano, Topic, NumeroAfferenti, Aperto, ResponsabileScientifico) VALUES (15, 'ClariTest Lab', 3, 'Informazioni su studenti universitari', 35, 'S', 29);
 
+
 INSERT INTO az.Progetto(CUP, Nome, Budget, Attivo, ReferenteScientifico, Responsabile, Lab1, Lab2, Lab3) VALUES (1, 'Progetto Alfa', 5000, 'S', 9, 30, 2, 7, NULL);
 INSERT INTO az.Progetto(CUP, Nome, Budget, Attivo, ReferenteScientifico, Responsabile, Lab1, Lab2, Lab3) VALUES (2, 'Progetto Beta', 4300, 'N', 6, 21, NULL, NULL, NULL);
-INSERT INTO az.Progetto(CUP, Nome, Budget, Attivo, ReferenteScientifico, Responsabile, Lab1, Lab2, Lab3) VALUES (3, 'Progetto Gamma', 6700, 'S', 24, 4, 15, 12, 34);
+INSERT INTO az.Progetto(CUP, Nome, Budget, Attivo, ReferenteScientifico, Responsabile, Lab1, Lab2, Lab3) VALUES (3, 'Progetto Gamma', 6700, 'S', 24, 4, 15, 12, NULL);
 INSERT INTO az.Progetto(CUP, Nome, Budget, Attivo, ReferenteScientifico, Responsabile, Lab1, Lab2, Lab3) VALUES (4, 'Progetto Epsilon' , 6000, 'S', 16, 28, 5, NULL, NULL);
 INSERT INTO az.Progetto(CUP, Nome, Budget, Attivo, ReferenteScientifico, Responsabile, Lab1, Lab2, Lab3) VALUES (5, 'Progetto Zeta' , 5500, 'S', 18, 22, 14, NULL, NULL);
