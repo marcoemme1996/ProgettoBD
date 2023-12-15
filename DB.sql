@@ -92,20 +92,20 @@ EXECUTE FUNCTION az.StipValido();
 
 -----------------------------------------------
 
-CREATE FUNCTION GradoTipoValido() RETURNS TRIGGER AS
+CREATE FUNCTION az.GradoTipoValido() RETURNS TRIGGER AS
 $$
 DECLARE
 
-TipoCapo Impiegato.Tipo%Type;
-TipoSottoposto Impiegato.Tipo%Type;
-GradoCapo Impiegato.Grado%Type;
-GradoSottoposto Impiegato.Grado%Type;
+TipoCapo az.Impiegato.Tipo%Type;
+TipoSottoposto az.Impiegato.Tipo%Type;
+GradoCapo az.Impiegato.Grado%Type;
+GradoSottoposto az.Impiegato.Grado%Type;
 
 BEGIN
 
 SELECT I1.Tipo, I2.Tipo, I1.Grado, I2.Grado INTO TipoSottoposto,
 TipoCapo, GradoSottoposto, GradoCapo
-FROM Impiegato AS I1, Impiegato AS I2
+FROM az.Impiegato AS I1, az.Impiegato AS I2
 WHERE I1.Capo = I2.CodImpiegato;
 
 IF(TipoCapo = 'Dipendente' AND TipoSottoposto = 'Dirigente') THEN
@@ -131,23 +131,23 @@ $$ LANGUAGE plpgsql;
 -------------------
 
 CREATE TRIGGER TriggerGradoTipiValido
-BEFORE INSERT ON Impiegato
+BEFORE INSERT ON az.Impiegato
 FOR EACH ROW
-EXECUTE FUNCTION GradoTipoValido();
+EXECUTE FUNCTION az.GradoTipoValido();
 
 -----------------------------------------------
 
-CREATE FUNCTION CheckImpiegati() RETURNS TRIGGER AS
+CREATE FUNCTION az.CheckImpiegati() RETURNS TRIGGER AS
 $$
 DECLARE
 
-GradoImp Impiegato.Grado%Type;
-TipoImp Impiegato.Tipo%Type;
+GradoImp az.Impiegato.Grado%Type;
+TipoImp az.Impiegato.Tipo%Type;
 
 BEGIN
 
 SELECT I.Grado, I.Tipo INTO GradoImp, TipoImp
-FROM Impiegato AS I
+FROM az.Impiegato AS I
 WHERE I.CodImpiegato = NEW.CodImpiegato;
 
 IF(TipoImp = 'Dipendente' AND GradoImp = NULL) THEN
@@ -166,25 +166,25 @@ $$ LANGUAGE plpgsql;
 -------------------
 
 CREATE TRIGGER TriggerCheckImpiegati
-BEFORE INSERT ON Impiegato
+BEFORE INSERT ON az.Impiegato
 FOR EACH ROW
-EXECUTE FUNCTION CheckImpiegati();
+EXECUTE FUNCTION az.CheckImpiegati();
 
 -----------------------------------------------
 
-CREATE FUNCTION PromozioneImpiegato() RETURNS TRIGGER AS
+CREATE FUNCTION az.PromozioneImpiegato() RETURNS TRIGGER AS
 $$
 DECLARE
 
-Imp Impiegato.CodImpiegato%Type;
+Imp az.Impiegato.CodImpiegato%Type;
 
 BEGIN
 SELECT I.CodImpiegato INTO Imp
-FROM Impiegato AS I
+FROM az.Impiegato AS I
 WHERE I.CodImpiegato = NEW.CodImpiegato;
 
-UPDATE Impiegato AS I
-SET Grado = NULL
+UPDATE az.Impiegato AS I
+SET I.Grado = NULL
 WHERE I.CodImpiegato = Imp AND OLD.Tipo = 'Dipendente' AND NEW.Tipo = 'Dirigente';
 
 RETURN NEW;
@@ -195,45 +195,45 @@ $$ LANGUAGE plpgsql;
 -------------------
 
 CREATE TRIGGER TriggerPromozioneImpiegato
-AFTER UPDATE ON Impiegato
+AFTER UPDATE ON az.Impiegato
 FOR EACH ROW
-EXECUTE FUNCTION PromozioneImpiegato();
+EXECUTE FUNCTION az.PromozioneImpiegato();
 
 -----------------------------------------------
 
-CREATE OR REPLACE FUNCTION CorreggiGrado () RETURNS TRIGGER AS
+CREATE OR REPLACE FUNCTION az.CorreggiGrado () RETURNS TRIGGER AS
 $$
 DECLARE
 
 AnniDiServizio integer;
-GradoImpiegato Impiegato.Grado%Type;
-TipoImpiegato Impiegato.Tipo%Type;
+GradoImpiegato az.Impiegato.Grado%Type;
+TipoImpiegato az.Impiegato.Tipo%Type;
 
 BEGIN
 
 SELECT YEAR(SYSDATE) - YEAR(I.DataAssunzione) INTO AnniDiServizio
-FROM Impiegato AS I
+FROM az.Impiegato AS I
 WHERE I.CodImpiegato = NEW.CodImpiegato;
 
 SELECT I.Grado, I.Tipo INTO GradoImpiegato, TipoImpiegato
-FROM Impiegato AS I
+FROM az.Impiegato AS I
 WHERE I.CodImpiegato = NEW.CodImpiegato;
 
 IF (TipoImpiegato = 'Dipendente') THEN
     IF (AnniDiServizio < 3 AND Grado <> 'Junior') THEN
-       UPDATE Impiegato AS I
+       UPDATE az.Impiegato AS I
        SET I.Grado = 'Junior'
        WHERE I.CodImpiegato = NEW.CodImpiegato;
     END IF;
 
     IF (AnniDiServizio >=3 AND AnniDiServizio < 7 AND Grado <> 'Middle') THEN
-	UPDATE Impiegato AS I
+	UPDATE az.Impiegato AS I
 	SET I.Grado = 'Middle'
 	WHERE I.CodImpiegato = NEW.CodImpiegato;
     END IF;
 
     IF (AnniDiServizio >= 7 AND Grado <> 'Senior') THEN
-	UPDATE Impiegato AS I
+	UPDATE az.Impiegato AS I
 	SET I.Grado = 'Senior'
 	WHERE I.CodImpiegato = NEW.CodImpiegato;
 	END IF;
@@ -247,21 +247,21 @@ $$ LANGUAGE plpgsql;
 -------------------
 
 CREATE TRIGGER TriggerCorreggiGrado
-BEFORE INSERT ON Impiegato
+BEFORE INSERT ON az.Impiegato
 FOR EACH ROW
-EXECUTE FUNCTION CorreggiGrado();
+EXECUTE FUNCTION az.CorreggiGrado();
 
 -----------------------------------------------
 
-CREATE OR REPLACE FUNCTION FixStipendio() RETURNS TRIGGER AS
+CREATE OR REPLACE FUNCTION az.FixStipendio() RETURNS TRIGGER AS
 $$
 DECLARE
-TipoImp Impiegato.Tipo%TYPE;
-GradoImp Impiegato.Grado%TYPE;
+TipoImp az.Impiegato.Tipo%TYPE;
+GradoImp az.Impiegato.Grado%TYPE;
 
 BEGIN
 SELECT I.Grado, I.Tipo INTO GradoImp, TipoImp
-FROM Impiegato AS I
+FROM az.Impiegato AS I
 WHERE OLD.Grado <> NEW.Grado OR OLD.Tipo <> NEW.Tipo;
 
 IF ((OLD.Tipo = 'Dirigente' AND NEW.Tipo = 'Dipendente') OR (OLD.Grado = 'Senior' AND (NEW.Grado = 'Junior' OR NEW.Grado = 'Middle')) OR (OLD.Grado = 'Middle' AND NEW.Grado = 'Junior')) THEN
@@ -269,12 +269,12 @@ IF ((OLD.Tipo = 'Dirigente' AND NEW.Tipo = 'Dipendente') OR (OLD.Grado = 'Senior
 
 ELSE
   IF (OLD.Tipo = 'Dipendente' AND NEW.Tipo = 'Dipendente') THEN
-  UPDATE Impiegato AS I
+  UPDATE az.Impiegato AS I
   SET I.Stipendio = I.Stipendio + 5000
   WHERE OLD.CodImpiegato = NEW.CodImpiegato;
 
   ELSE IF (OLD.Tipo = 'Dipendente' AND NEW.Tipo = 'Dirigente') THEN
-  UPDATE Impiegato AS I
+  UPDATE az.Impiegato AS I
   SET I.Stipendio = 20000
   WHERE OLD.CodImpiegato = NEW.CodImpiegato;
 
@@ -289,9 +289,9 @@ $$ LANGUAGE plpgsql;
 ---------------
 
 CREATE TRIGGER TriggerFixStipendio
-AFTER UPDATE ON Impiegato
+AFTER UPDATE ON az.Impiegato
 FOR EACH ROW
-EXECUTE FUNCTION FixStipendio();
+EXECUTE FUNCTION az.FixStipendio();
 
 -----------------------------------------------
 
@@ -299,34 +299,34 @@ CREATE OR REPLACE FUNCTION SetStipendio() RETURNS TRIGGER AS
 $$
 DECLARE
 
-GradoImp Impiegato.Grado%TYPE;
-TipoImp Impiegato.Tipo%TYPE;
-StipendioImp Impiegato.Stipendio%TYPE;
+GradoImp az.Impiegato.Grado%TYPE;
+TipoImp az.Impiegato.Tipo%TYPE;
+StipendioImp az.Impiegato.Stipendio%TYPE;
 
 BEGIN
 
 SELECT NEW.Grado, NEW.Tipo, NEW.Stipendio INTO GradoImp, TipoImp, StipendioImp
-FROM Impiegato AS I
+FROM az.Impiegato AS I
 WHERE I.CodImpiegato = NEW.CodImpiegato;
 
 
 IF (TipoImp = 'Dipendente' AND GradoImp = 'Junior' AND StipendioImp <> 5000) THEN
-  UPDATE Impiegato AS I
+  UPDATE az.Impiegato AS I
   SET I.Stipendio = 5000
   WHERE I.CodImpiegato = NEW.CodImpiegato;
 
 ELSE IF (TipoImp = 'Dipendente' AND GradoImp = 'Middle' AND StipendioImp <> 10000) THEN
-  UPDATE Impiegato AS I
+  UPDATE az.Impiegato AS I
   SET I.Stipendio = 10000
   WHERE I.CodImpiegato = NEW.CodImpiegato;
 
 ELSE IF (TipoImp = 'Dipendente' AND GradoImp = 'Senior' AND StipendioImp <> 15000) THEN
-  UPDATE Impiegato AS I
+  UPDATE az.Impiegato AS I
   SET I.Stipendio = 15000
   WHERE I.CodImpiegato = NEW.CodImpiegato;
 
 ELSE IF (TipoImp = 'Dirigente' AND StipendioImp <> 20000) THEN
-  UPDATE Impiegato AS I
+  UPDATE az.Impiegato AS I
   SET I.Stipendio = 20000
   WHERE I.CodImpiegato = NEW.CodImpiegato;
 
@@ -339,28 +339,28 @@ $$ LANGUAGE plpgsql;
 -----------------
 
 CREATE TRIGGER TriggerSetStipendio
-AFTER INSERT ON Impiegato
+AFTER INSERT ON az.Impiegato
 FOR EACH ROW
-EXECUTE FUNCTION SetStipendio();
+EXECUTE FUNCTION az.SetStipendio();
 
 -----------------------------------------------
 
-CREATE OR REPLACE FUNCTION getlabs(imp Impiegato.CodImpiegato%TYPE)
-RETURNS Laboratorio.Nome%TYPE AS
+CREATE OR REPLACE FUNCTION az.getlabs(imp az.Impiegato.CodImpiegato%TYPE)
+RETURNS az.Laboratorio.Nome%TYPE AS
 $$
 DECLARE
-NomeLab Laboratorio.Nome%TYPE;
-TipoImp Impiegato.Tipo%TYPE;
-GradoImp Impiegato.Grado%TYPE;
+NomeLab az.Laboratorio.Nome%TYPE;
+TipoImp az.Impiegato.Tipo%TYPE;
+GradoImp az.Impiegato.Grado%TYPE;
 res VARCHAR(100) = " ";
 curslab CURSOR FOR(
 SELECT L.Nome
-FROM Laboratorio AS L
+FROM az.Laboratorio AS L
 WHERE L.ResponsabileScientifico = imp);
 
 BEGIN
   SELECT I.Tipo, I.Grado INTO TipoImp, GradoImp
-  FROM Impiegato AS I
+  FROM az.Impiegato AS I
   WHERE CodImpiegato = imp;
 
   IF (TipoImp <> 'Dipendente' AND GradoImp <> 'Senior') THEN
@@ -380,19 +380,19 @@ $$ LANGUAGE plpgsql;
 
 -----------------------------------------------
 
-CREATE OR REPLACE FUNCTION getimpiegato(az Azienda.CodAzienda%TYPE)
+CREATE OR REPLACE FUNCTION az.getimpiegato(az az.Azienda.CodAzienda%TYPE)
 RETURNS VARCHAR(1000) AS
 $$
 DECLARE
-NomeImp Impiegato.Nome%TYPE;
-CognomeImp Impiegato.Cognome%TYPE;
+NomeImp az.Impiegato.Nome%TYPE;
+CognomeImp az.Impiegato.Cognome%TYPE;
 res VARCHAR(100) = "Per la suddetta azienda lavorano: ";
 ris VARCHAR(1000) = " ";
 risultatofinale VARCHAR(1000) = " ";
 
 cursaz CURSOR FOR(
 SELECT I.Nome, I.Cognome
-FROM Impiegato AS I JOIN Azienda AS A ON I.CodAzienda = A.CodAzienda
+FROM az.Impiegato AS I JOIN az.Azienda AS A ON I.CodAzienda = A.CodAzienda
 WHERE A.CodAzienda = az);
 
 BEGIN
@@ -412,25 +412,25 @@ $$ LANGUAGE plpgsql;
 
 -----------------------------------------------
 
-CREATE OR REPLACE FUNCTION getprog(imp Impiegato.CodImpiegato%TYPE)
-RETURNS Progetto.Nome%TYPE AS
+CREATE OR REPLACE FUNCTION az.getprog(imp az.Impiegato.CodImpiegato%TYPE)
+RETURNS az.Progetto.Nome%TYPE AS
 $$
 DECLARE
-NomeProg Progetto.Nome%TYPE;
-TipoImp Impiegato.Tipo%TYPE;
-GradoImp Impiegato.Grado%TYPE;
+NomeProg az.Progetto.Nome%TYPE;
+TipoImp az.Impiegato.Tipo%TYPE;
+GradoImp az.Impiegato.Grado%TYPE;
 res1 CHAR(100) = "Il suddetto impiegato è il referente scientifico di: ";
 res2 CHAR(100) = "Il suddetto impiegato è il responsabile di: ";
 ris VARCHAR(1000) =  " ";
 risultatofinale VARCHAR(1000) = " ";
 cursprog CURSOR FOR(
 SELECT P.Nome
-FROM Progetto AS P
+FROM az.Progetto AS P
 WHERE P.ReferenteScientifico = imp OR P.Responsabile = imp);
 
 BEGIN
   SELECT I.Tipo, I.Grado INTO TipoImp, GradoImp
-  FROM Impiegato AS I
+  FROM az.Impiegato AS I
   WHERE CodImpiegato = imp;
 
   IF ((TipoImp = 'Dipendente' AND GradoImp <> 'Senior') OR (TipoImp <> 'Dirigente')) THEN
@@ -465,19 +465,19 @@ $$ LANGUAGE plpgsql;
 
 -----------------------------------------------
 
-CREATE FUNCTION CheckLaboratorio () RETURNS TRIGGER AS
+CREATE OR REPLACE FUNCTION az.CheckLaboratorio () RETURNS TRIGGER AS
 $$
 DECLARE
 
-RespScientifico Impiegato.CodImpiegato%Type;
-Imp Impiegato.CodImpiegato%Type;
-GradoImp Impiegato.Grado%Type;
-TipoImp Impiegato.Tipo%Type;
+RespScientifico az.Impiegato.CodImpiegato%Type;
+Imp az.Impiegato.CodImpiegato%Type;
+GradoImp az.Impiegato.Grado%Type;
+TipoImp az.Impiegato.Tipo%Type;
 
 BEGIN
 
 SELECT I.Grado INTO GradoImp
-FROM Impiegato AS I JOIN Laboratorio AS L ON I.CodImpiegato =
+FROM az.Impiegato AS I JOIN Laboratorio AS L ON I.CodImpiegato =
 L.ResponsabileScientifico
 WHERE L.CodLab = NEW.CodLab;
 
@@ -493,13 +493,13 @@ $$ LANGUAGE plpgsql;
 -------------------
 
 CREATE TRIGGER TriggerCheckLaboratorio
-BEFORE INSERT ON Laboratorio
+BEFORE INSERT ON az.Laboratorio
 FOR EACH ROW
-EXECUTE FUNCTION CheckLaboratorio();
+EXECUTE FUNCTION az.CheckLaboratorio();
 
 -----------------------------------------------
 
-CREATE OR REPLACE FUNCTION LaboratorioAperto() RETURNS TRIGGER AS
+CREATE OR REPLACE FUNCTION az.LaboratorioAperto() RETURNS TRIGGER AS
 $$
 DECLARE
 
@@ -522,19 +522,19 @@ $$ LANGUAGE plpgsql;
 -------------------
 
 CREATE TRIGGER TriggerLaboratorioAperto
-BEFORE INSERT ON Laboratorio
+BEFORE INSERT ON az.Laboratorio
 FOR EACH ROW
-EXECUTE FUNCTION LaboratorioAperto();
+EXECUTE FUNCTION az.LaboratorioAperto();
 
 -----------------------------------------------
 
-CREATE FUNCTION ChiusuraLaboratorio() RETURNS TRIGGER AS
+CREATE FUNCTION az.ChiusuraLaboratorio() RETURNS TRIGGER AS
 $$
 DECLARE
 
 BEGIN
 
-UPDATE Laboratorio AS L
+UPDATE az.Laboratorio AS L
 SET L.ResponsabileScientifico = NULL,
 Aperto = 'N'
 WHERE L.ResponsabileScientifico = OLD.CodImpiegato;
@@ -547,22 +547,22 @@ $$ LANGUAGE plpgsql;
 -------------------
 
 CREATE TRIGGER TriggerChiusuraLab
-AFTER DELETE ON Impiegato
+AFTER DELETE ON az.Impiegato
 FOR EACH ROW
-EXECUTE FUNCTION ChiusuraLaboratorio();
+EXECUTE FUNCTION az.ChiusuraLaboratorio();
 
 -----------------------------------------------
 
-CREATE OR REPLACE FUNCTION getprogfromlab(lab Laboratorio.CodLab%TYPE)
-RETURNS Progetto.Nome%TYPE AS
+CREATE OR REPLACE FUNCTION az.getprogfromlab(lab az.Laboratorio.CodLab%TYPE)
+RETURNS az.Progetto.Nome%TYPE AS
 $$
 DECLARE
-NomeProg Progetto.Nome%TYPE;
+NomeProg az.Progetto.Nome%TYPE;
 res VARCHAR(100) = " ";
 
 cursprogfromlab CURSOR FOR(
 SELECT P.Nome
-FROM Progetto AS P
+FROM az.Progetto AS P
 WHERE P.Lab1 = lab OR P.Lab2 = lab OR P.Lab3 = lab);
 
 BEGIN
@@ -581,23 +581,23 @@ $$ LANGUAGE plpgsql;
 
 -----------------------------------------------
 
-CREATE FUNCTION CheckProgetto() RETURNS TRIGGER AS
+CREATE FUNCTION az.CheckProgetto() RETURNS TRIGGER AS
 $$
 DECLARE
 
-GradoResp Impiegato.Grado%Type;
-GradoReferente Impiegato.Grado%Type;
-TipoResp Impiegato.Tipo%Type;
-TipoReferente Impiegato.Tipo%Type;
+GradoResp az.Impiegato.Grado%Type;
+GradoReferente az.Impiegato.Grado%Type;
+TipoResp az.Impiegato.Tipo%Type;
+TipoReferente az.Impiegato.Tipo%Type;
 
 BEGIN
 
 SELECT I.Grado, I.Tipo INTO GradoResp, TipoResp
-FROM Impiegato AS I JOIN Laboratorio AS L ON I.CodImpiegato = L.Responsabile
+FROM az.Impiegato AS I JOIN az.Laboratorio AS L ON I.CodImpiegato = L.Responsabile
 WHERE I.CodImpiegato = NEW.CodImpiegato;
 
 SELECT I.Grado, I.Tipo INTO GradoReferente, TipoReferente
-FROM Impiegato AS I JOIN Laboratorio AS L ON I.CodImpiegato = L.ReferenteScientifico
+FROM az.Impiegato AS I JOIN az.Laboratorio AS L ON I.CodImpiegato = L.ReferenteScientifico
 WHERE I.CodImpiegato = NEW.CodImpiegato;
 
 IF(TipoReferente = 'Dirigente' OR (TipoReferente = 'Dipendente' AND GradoReferente <> 'Senior') ) THEN
@@ -616,37 +616,37 @@ $$ LANGUAGE plpgsql;
 -------------------
 
 CREATE TRIGGER TriggerCheckProgetto
-BEFORE INSERT ON Progetto
+BEFORE INSERT ON az.Progetto
 FOR EACH ROW
-EXECUTE FUNCTION CheckProgetto();
+EXECUTE FUNCTION az.CheckProgetto();
 
 -----------------------------------------------
 
-CREATE FUNCTION ProgettoAttivo() RETURNS TRIGGER AS
+CREATE FUNCTION az.ProgettoAttivo() RETURNS TRIGGER AS
 $$
 DECLARE
 
-RefScientifico Impiegato.CodImpiegato%Type;
-Resp Impiegato.CodImpiegato%Type;
-PrimoLaboratorio Laboratorio.CodLab%Type;
-SecondoLaboratorio Laboratorio.CodLab%Type;
-TerzoLaboratorio Laboratorio.CodLab%Type;
+RefScientifico az.Impiegato.CodImpiegato%Type;
+Resp az.Impiegato.CodImpiegato%Type;
+PrimoLaboratorio az.Laboratorio.CodLab%Type;
+SecondoLaboratorio az.Laboratorio.CodLab%Type;
+TerzoLaboratorio az.Laboratorio.CodLab%Type;
 
 BEGIN
 
 SELECT P.ReferenteScientifico, P.Responsabile, P.Lab1, P.Lab2, P.Lab3
 INTO RefScientifico, Resp, PrimoLaboratorio, SecondoLaboratorio, TerzoLaboratorio
-FROM Progetto AS P
+FROM az.Progetto AS P
 WHERE P.CUP = NEW.CUP;
 
 IF ((RefScientifico = NULL OR Resp = NULL) OR (PrimoLaboratorio = NULL
 AND SecondoLaboratorio = NULL AND TerzoLaboratorio = NULL)) THEN
-    UPDATE Progetto AS P
+    UPDATE az.Progetto AS P
     SET Attivo = 'N'
     WHERE P.CUP = NEW.CUP;
 
 ELSE
-    UPDATE Progetto AS P
+    UPDATE az.Progetto AS P
     SET Attivo = 'S'
     WHERE P.CUP = NEW.CUP;
 END IF;
@@ -659,32 +659,32 @@ $$ LANGUAGE plpgsql;
 -------------------
 
 CREATE TRIGGER TriggerProgettoAttivo
-BEFORE INSERT ON Progetto
+BEFORE INSERT ON az.Progetto
 FOR EACH ROW
-EXECUTE FUNCTION ProgettoAttivo();
+EXECUTE FUNCTION az.ProgettoAttivo();
 
 -----------------------------------------------
 
-CREATE FUNCTION ChiusuraProgettoImpiegato() RETURNS TRIGGER AS
+CREATE FUNCTION az.ChiusuraProgettoImpiegato() RETURNS TRIGGER AS
 $$
 DECLARE
 
-ImpiegatoCancellato Impiegato.CodImpiegato%Type;
+ImpiegatoCancellato az.Impiegato.CodImpiegato%Type;
 
 BEGIN
 
 SELECT I.CodImpiegato INTO ImpiegatoCancellato
-FROM Impiegato AS I
+FROM az.Impiegato AS I
 WHERE I.CodImpiegato = OLD.CodImpiegato;
 
 IF(ImpiegatoCancellato = ReferenteScientifico) THEN
-    UPDATE Progetto AS P
+    UPDATE az.Progetto AS P
     SET P.ReferenteScientifico = NULL, P.Attivo = 'N'
     WHERE P.ReferenteScientifico = OLD.CodImpiegato;
 END IF;
 
 IF(ImpiegatoCancellato = Responsabile) THEN
-    UPDATE Progetto AS P
+    UPDATE az.Progetto AS P
     SET P.Responsabile = NULL, P.Attivo = 'N'
     WHERE P.Responsabile = OLD.CodImpiegato;
 END IF;
@@ -697,44 +697,44 @@ $$ LANGUAGE plpgsql;
 -------------------
 
 CREATE TRIGGER TriggerChiusuraProgettoImpiegato
-AFTER DELETE ON Impiegato
+AFTER DELETE ON az.Impiegato
 FOR EACH ROW
-EXECUTE FUNCTION ChiusuraProgettoImpiegato();
+EXECUTE FUNCTION az.ChiusuraProgettoImpiegato();
 
 -----------------------------------------------
 
-CREATE FUNCTION ChiusuraProgLaboratorio() RETURNS TRIGGER AS
+CREATE FUNCTION az.ChiusuraProgLaboratorio() RETURNS TRIGGER AS
 $$
 DECLARE
 
-LabCancellato Laboratorio.CodLab%Type;
-PrimoLaboratorio Laboratorio.CodLab%Type;
-SecondoLaboratorio Laboratorio.CodLab%Type;
-TerzoLaboratorio Laboratorio.CodLab%Type;
+LabCancellato az.Laboratorio.CodLab%Type;
+PrimoLaboratorio az.Laboratorio.CodLab%Type;
+SecondoLaboratorio az.Laboratorio.CodLab%Type;
+TerzoLaboratorio az.Laboratorio.CodLab%Type;
 
 BEGIN
 
 SELECT L.CodLab, L.Lab1, L.Lab2, L.Lab3 INTO LabCancellato, PrimoLaboratorio, SecondoLaboratorio, TerzoLaboratorio
-FROM Laboratorio AS L
+FROM az.Laboratorio AS L
 WHERE L.CodLab = OLD.CodLab;
 
 IF(LabCancellato = PrimoLaboratorio AND SecondoLaboratorio = NULL AND
 TerzoLaboratorio = NULL) THEN
-    UPDATE Progetto AS P
+    UPDATE az.Progetto AS P
     SET P.Lab1 = NULL, P.Attivo = 'N'
     WHERE P.Lab1 = OLD.CodLab;
 END IF;
 
 IF(LabCancellato = SecondoLaboratorio AND PrimoLaboratorio = NULL AND
 TerzoLaboratorio = NULL) THEN
-    UPDATE Progetto AS P
+    UPDATE az.Progetto AS P
     SET P.Lab2 = NULL, P.Attivo = 'N'
     WHERE P.Lab2 = OLD.CodLab;
 END IF;
 
 IF(LabCancellato = TerzoLaboratorio AND PrimoLaboratorio = NULL AND
 SecondoLaboratorio = NULL) THEN
-    UPDATE Progetto AS P
+    UPDATE az.Progetto AS P
     SET P.Lab3 = NULL, P.Attivo = 'N'
     WHERE P.Lab3 = OLD.CodLab;
 END IF;
@@ -747,29 +747,29 @@ $$ LANGUAGE plpgsql;
 -------------------
 
 CREATE TRIGGER TriggerChiusuraProgLaboratorio
-AFTER DELETE ON Laboratorio
+AFTER DELETE ON az.Laboratorio
 FOR EACH ROW
-EXECUTE FUNCTION ChiusuraProgLaboratorio();
+EXECUTE FUNCTION az.ChiusuraProgLaboratorio();
 
 -----------------------------------------------
 
-CREATE VIEW ScattiDiCarriera (CodImpiegato, Nome, Cognome, Tipo, Grado,
+CREATE VIEW az.ScattiDiCarriera (CodImpiegato, Nome, Cognome, Tipo, Grado,
 Stipendio, AnnoDiPromozione) AS
 SELECT I.CodImpiegato, I.Nome, I.Cognome, I.Tipo, I.Grado, I.Stipendio, date_part('year'::text, CURRENT_DATE)
-FROM Impiegato AS I
+FROM az.Impiegato AS I
 
 -------------------
 
-CREATE FUNCTION ScattiDiCarriera() RETURNS TRIGGER AS
+CREATE FUNCTION az.ScattiDiCarriera() RETURNS TRIGGER AS
 $$
 DECLARE
 
 BEGIN
 
-INSERT INTO ScattiDiCarriera(
+INSERT INTO az.ScattiDiCarriera(
 SELECT I.CodImpiegato, I.Nome, I.Cognome, I.Tipo, I.Grado, I.Stipendio,
 EXTRACT(YEAR FROM CURRENT_DATE)
-FROM Impiegato AS I
+FROM az.Impiegato AS I
 WHERE I.CodImpiegato = NEW.CodImpiegato AND OLD.Grado <> NEW.Grado);
 
 RETURN NEW;
@@ -780,9 +780,9 @@ $$ LANGUAGE plpgsql;
 -------------------
 
 CREATE TRIGGER TriggerScattiDiCarriera
-AFTER UPDATE ON Impiegato
+AFTER UPDATE ON az.Impiegato
 FOR EACH ROW
-EXECUTE FUNCTION ScattiDiCarriera();
+EXECUTE FUNCTION az.ScattiDiCarriera();
 
 -------------------
 Inserimenti
