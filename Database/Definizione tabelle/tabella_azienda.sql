@@ -1,0 +1,6 @@
+CREATE TABLE az.Azienda(
+CodAzienda INTEGER,
+Nome VARCHAR(20),
+Sede VARCHAR(20),
+
+CONSTRAINT PKA1 PRIMARY KEY (CodAzienda));
