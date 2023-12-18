@@ -1,0 +1,5 @@
+INSERT INTO az.Progetto(CUP, Nome, Budget, Attivo, ReferenteScientifico, Responsabile, Lab1, Lab2, Lab3) VALUES (1, 'Progetto Alfa', 5000, 'S', 9, 30, 2, 7, NULL);
+INSERT INTO az.Progetto(CUP, Nome, Budget, Attivo, ReferenteScientifico, Responsabile, Lab1, Lab2, Lab3) VALUES (2, 'Progetto Beta', 4300, 'N', 6, 21, NULL, NULL, NULL);
+INSERT INTO az.Progetto(CUP, Nome, Budget, Attivo, ReferenteScientifico, Responsabile, Lab1, Lab2, Lab3) VALUES (3, 'Progetto Gamma', 6700, 'S', 24, 4, 15, 12, NULL);
+INSERT INTO az.Progetto(CUP, Nome, Budget, Attivo, ReferenteScientifico, Responsabile, Lab1, Lab2, Lab3) VALUES (4, 'Progetto Epsilon' , 6000, 'S', 16, 28, 5, NULL, NULL);
+INSERT INTO az.Progetto(CUP, Nome, Budget, Attivo, ReferenteScientifico, Responsabile, Lab1, Lab2, Lab3) VALUES (5, 'Progetto Zeta' , 5500, 'S', 18, 22, 14, NULL, NULL);
